@@ -1,14 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Hash, Sparkles, AlertCircle, RefreshCw, SendHorizontal } from "lucide-react";
+import { Hash, Sparkles, AlertCircle, RefreshCw, SendHorizontal, X } from "lucide-react";
 import { ChatMessage } from "../types";
 
 interface ChatCollaborationProps {
   messages: ChatMessage[];
   onSendMessage: (content: string) => Promise<void>;
   isGenerating: boolean;
+  errorMessage?: string | null;
+  onDismissError?: () => void;
 }
 
-export default function ChatCollaboration({ messages, onSendMessage, isGenerating }: ChatCollaborationProps) {
+export default function ChatCollaboration({ 
+  messages, 
+  onSendMessage, 
+  isGenerating,
+  errorMessage,
+  onDismissError
+}: ChatCollaborationProps) {
   const [activeChannel, setActiveChannel] = useState("#project-alpha");
   const [userInput, setUserInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -49,7 +57,7 @@ export default function ChatCollaboration({ messages, onSendMessage, isGeneratin
     <div className="flex h-[calc(100vh-4rem)] bg-[#070b14] overflow-hidden">
       
       {/* Channels Sidebar List */}
-      <div className="w-64 border-r border-gray-800/60 bg-[#060a12] p-4 flex flex-col justify-between hidden md:flex">
+      <div className="w-64 border-r border-gray-800/60 bg-[#060a12] p-4 flex-col justify-between hidden md:flex">
         <div className="space-y-4">
           <div>
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono mb-3">CANAUX COLLABORATIFS</h3>
@@ -88,7 +96,7 @@ export default function ChatCollaboration({ messages, onSendMessage, isGeneratin
       <div className="flex-1 flex flex-col justify-between bg-[#080d19]">
         
         {/* Active channel header */}
-        <div className="h-14 border-b border-gray-800/60 bg-[#080d19]/80 backdrop-blur px-6 flex items-center justify-between">
+        <div className="h-14 border-b border-gray-800/60 bg-[#080d19]/80 backdrop-blur px-4 sm:px-6 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
               <Hash className="w-4 h-4 text-[#00C969]" />
@@ -101,13 +109,30 @@ export default function ChatCollaboration({ messages, onSendMessage, isGeneratin
         </div>
 
         {/* Messages List Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          {errorMessage && (
+            <div className="max-w-3xl mx-auto p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs flex items-start gap-3">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span className="leading-relaxed flex-1">{errorMessage}</span>
+              {onDismissError && (
+                <button
+                  type="button"
+                  onClick={onDismissError}
+                  className="p-0.5 rounded text-red-300 hover:text-white"
+                  aria-label="Masquer l'erreur"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          )}
+
           {messages.map((msg) => {
             const isUser = msg.sender === "user";
             return (
               <div 
                 key={msg.id} 
-                className={`flex gap-4 max-w-3xl ${isUser ? "ml-auto flex-row-reverse" : "mr-auto"}`}
+                className={`flex gap-3 sm:gap-4 max-w-3xl ${isUser ? "ml-auto flex-row-reverse" : "mr-auto"}`}
               >
                 {/* Avatar */}
                 <img 
@@ -118,7 +143,7 @@ export default function ChatCollaboration({ messages, onSendMessage, isGeneratin
                 />
 
                 {/* Message Body */}
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0">
                   <div className={`flex items-center gap-2 text-[10px] ${isUser ? "justify-end text-gray-400" : "text-gray-400"}`}>
                     <span className="font-bold text-white">{msg.senderName}</span>
                     <span className="font-mono">{msg.timestamp}</span>
@@ -128,7 +153,7 @@ export default function ChatCollaboration({ messages, onSendMessage, isGeneratin
                   </div>
                   
                   <div 
-                    className={`p-3.5 rounded-2xl text-xs leading-relaxed space-y-2 select-text selection:bg-[#00C969]/20 ${
+                    className={`p-3.5 rounded-2xl text-xs leading-relaxed space-y-2 select-text selection:bg-[#00C969]/20 break-words ${
                       isUser 
                         ? "bg-[#00C969] text-slate-900 font-medium rounded-tr-none" 
                         : "bg-[#090f1d] border border-gray-800 text-gray-300 rounded-tl-none whitespace-pre-wrap"

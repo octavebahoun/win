@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Calendar, Clock, Share2, Sparkles, MessageSquare, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { Plus, Clock, Image as ImageIcon, Sparkles, Radio, Send, TrendingUp } from "lucide-react";
 import { CalendarEvent } from "../types";
 
 interface TimelineCalendarProps {
@@ -31,6 +31,14 @@ export default function TimelineCalendar({ events, onAddEvent }: TimelineCalenda
     { id: "facebook", label: "Facebook Page", color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" }
   ];
 
+  const scheduledEvents = events.filter(e => e.status === "scheduled");
+  const publishedEvents = events.filter(e => e.status === "published");
+  const activePlatforms = new Set(events.map(e => e.platform)).size;
+  const nextEvent = [...scheduledEvents].sort((a, b) => {
+    if (a.day !== b.day) return a.day - b.day;
+    return a.scheduledTime.localeCompare(b.scheduledTime);
+  })[0];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -51,7 +59,7 @@ export default function TimelineCalendar({ events, onAddEvent }: TimelineCalenda
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)]">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header bar */}
       <div className="flex items-center justify-between">
         <div>
@@ -137,6 +145,84 @@ export default function TimelineCalendar({ events, onAddEvent }: TimelineCalenda
           </div>
         </form>
       )}
+
+      {/* Bento campaign summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-5 rounded-xl border border-gray-800/80 bg-[linear-gradient(135deg,#0b1220,#07101f_55%,#05131a)] p-5 min-h-44 relative overflow-hidden">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#00C969]/70 to-transparent" />
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00C969] font-bold mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                Campagne active
+              </div>
+              <h4 className="text-xl font-black text-white leading-tight">Présence digitale WINE</h4>
+              <p className="text-xs text-gray-400 mt-2 max-w-sm leading-relaxed">
+                {nextEvent ? `Prochaine diffusion ${nextEvent.dayName.toLowerCase()} à ${nextEvent.scheduledTime}.` : "Aucune diffusion planifiée pour le moment."}
+              </p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-[#00C969]/10 border border-[#00C969]/20 flex items-center justify-center text-[#00C969]">
+              <Radio className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            <div className="rounded-lg bg-white/[0.045] border border-white/10 px-3 py-3">
+              <p className="text-2xl font-black font-mono text-white">{scheduledEvents.length}</p>
+              <p className="text-[10px] text-gray-500 font-mono uppercase">Planifiés</p>
+            </div>
+            <div className="rounded-lg bg-white/[0.045] border border-white/10 px-3 py-3">
+              <p className="text-2xl font-black font-mono text-white">{activePlatforms}</p>
+              <p className="text-[10px] text-gray-500 font-mono uppercase">Canaux</p>
+            </div>
+            <div className="rounded-lg bg-white/[0.045] border border-white/10 px-3 py-3">
+              <p className="text-2xl font-black font-mono text-[#00C969]">{publishedEvents.length || 0}</p>
+              <p className="text-[10px] text-gray-500 font-mono uppercase">Publiés</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-4 rounded-xl border border-gray-800/80 bg-[#090f1d] p-5 min-h-44">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-[10px] uppercase font-mono text-gray-500 font-bold">Prochain post</p>
+              <h4 className="text-sm font-bold text-white mt-1">
+                {nextEvent ? `${nextEvent.day} Juin • ${nextEvent.scheduledTime}` : "À planifier"}
+              </h4>
+            </div>
+            <Send className="w-4 h-4 text-[#00C969]" />
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-gray-950/40 p-3 min-h-24">
+            {nextEvent ? (
+              <>
+                <span className="inline-flex mb-2 px-2 py-0.5 rounded-md bg-[#00C969]/10 text-[#00C969] text-[9px] font-mono uppercase font-bold">
+                  {nextEvent.platform}
+                </span>
+                <p className="text-xs text-gray-300 leading-relaxed line-clamp-3">{nextEvent.title}</p>
+              </>
+            ) : (
+              <p className="text-xs text-gray-500 leading-relaxed">Créez un post pour voir le prochain contenu ici.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 rounded-xl border border-gray-800/80 bg-[#090f1d] p-5 min-h-44 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] uppercase font-mono text-gray-500 font-bold">WINE AI</p>
+              <h4 className="text-sm font-bold text-white mt-1">Meilleur créneau</h4>
+            </div>
+            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div>
+            <p className="text-3xl font-black font-mono text-white">11:00</p>
+            <p className="text-xs text-gray-500 mt-1">Créneau recommandé pour LinkedIn et WhatsApp Business.</p>
+          </div>
+          <div className="h-1.5 rounded-full bg-gray-800 overflow-hidden">
+            <div className="h-full w-[78%] bg-gradient-to-r from-[#00C969] to-cyan-300" />
+          </div>
+        </div>
+      </div>
 
       {/* Main Grid: Days Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-start">

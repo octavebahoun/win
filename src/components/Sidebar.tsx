@@ -20,6 +20,7 @@ interface SidebarProps {
   onExitApp: () => void;
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
+  isMobileOpen?: boolean;
 }
 
 export default function Sidebar({ 
@@ -27,7 +28,8 @@ export default function Sidebar({
   setActiveTab, 
   onExitApp, 
   isCollapsed, 
-  setIsCollapsed 
+  setIsCollapsed,
+  isMobileOpen = false
 }: SidebarProps) {
   const menuItems = [
     { id: "dashboard", label: "Tableau de bord", icon: Home },
@@ -41,9 +43,9 @@ export default function Sidebar({
 
   return (
     <aside 
-      className={`relative z-40 h-screen bg-[#070b14] border-r border-gray-800/80 flex flex-col justify-between transition-all duration-300 ${
+      className={`fixed md:relative z-40 h-screen bg-[#070b14] border-r border-gray-800/80 flex flex-col justify-between transition-all duration-300 ${
         isCollapsed ? "w-20" : "w-64"
-      }`}
+      } ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
     >
       {/* Top Brand Logo */}
       <div>
@@ -76,14 +78,14 @@ export default function Sidebar({
               <span>Workspace Actif</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white truncate">Congo Tech Lab 🇨🇬</span>
+              <span className="text-xs font-bold text-white truncate">Bénin Tech Hub 🇧🇯</span>
               <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-mono font-medium">Sprints</span>
             </div>
           </div>
         ) : (
           <div className="my-3 flex justify-center">
             <div className="w-8 h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-[#00C969] text-xs font-bold">
-              🇨🇬
+              🇧🇯
             </div>
           </div>
         )}
@@ -99,7 +101,7 @@ export default function Sidebar({
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? "bg-[#00C969]/10 text-[#40e682] border-l-2 border-[#00C969] shadow-[inset_4px_0_12px_rgba(0,201,105,0.05)]"
+                    ? "bg-[#00C969]/10 text-[#40e682]"
                     : "text-gray-400 hover:text-white hover:bg-gray-900/40"
                 }`}
               >

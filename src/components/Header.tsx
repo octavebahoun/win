@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Bell, Sparkles, Plus, Check } from "lucide-react";
+import { Search, Bell, Plus } from "lucide-react";
 
 interface HeaderProps {
   title: string;
@@ -17,17 +17,17 @@ export default function Header({ title, onAddTaskClick, notificationsCount = 2 }
   ];
 
   return (
-    <header className="h-16 border-b border-gray-800/60 bg-[#080d19]/80 backdrop-blur-md px-6 flex items-center justify-between relative z-30">
+    <header className="h-16 border-b border-gray-800/60 bg-[#080d19]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between relative z-30">
       {/* Title / Tab Name */}
       <div className="flex items-center gap-3">
-        <h2 className="text-lg font-bold text-white tracking-tight font-sans">{title}</h2>
+        <h2 className="text-sm sm:text-lg font-bold text-white tracking-tight font-sans truncate max-w-[58vw] md:max-w-none">{title}</h2>
         <div className="hidden sm:flex items-center h-5 px-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">
           Sprint Actuel
         </div>
       </div>
 
       {/* Right Side Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Search */}
         <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -45,7 +45,7 @@ export default function Header({ title, onAddTaskClick, notificationsCount = 2 }
             className="h-9 px-3.5 rounded-lg bg-gradient-to-r from-[#00C969] to-[#40e682] text-slate-900 font-bold text-xs flex items-center gap-1.5 hover:shadow-[0_0_15px_rgba(0,201,105,0.25)] hover:scale-[1.01] active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[3px]" />
-            <span>Nouvelle Tâche</span>
+            <span className="hidden sm:inline">Nouvelle Tâche</span>
           </button>
         )}
 
@@ -63,7 +63,7 @@ export default function Header({ title, onAddTaskClick, notificationsCount = 2 }
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 rounded-xl bg-[#0b1220] border border-gray-800 p-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-50">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-80 rounded-xl bg-[#0b1220] border border-gray-800 p-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-50">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-800/60">
                 <span className="text-xs font-bold text-white">Notifications</span>
                 <span className="text-[10px] text-[#00C969] font-semibold cursor-pointer hover:underline">Marquer comme lu</span>

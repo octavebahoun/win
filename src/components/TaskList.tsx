@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Search, Filter, Trash2, Calendar, AlertCircle } from "lucide-react";
+import { Check, Search, Trash2, Calendar } from "lucide-react";
 import { Task } from "../types";
 
 interface TaskListProps {
@@ -25,7 +25,7 @@ export default function TaskList({ tasks, onToggleTaskStatus, onDeleteTask }: Ta
   const progressPercent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)]">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Search and Filters Bar */}
       <div className="p-5 rounded-2xl bg-[#090f1d] border border-gray-800 space-y-4">
         {/* Progress Bar Header */}

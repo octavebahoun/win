@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, ArrowLeftRight, ChevronRight, Check } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, ArrowRight } from "lucide-react";
 import { Task } from "../types";
 
 interface KanbanBoardProps {
@@ -58,11 +58,11 @@ export default function KanbanBoard({ tasks, onAddTask, onUpdateTaskStatus, onDe
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)]">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Kanban Actions bar */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm text-gray-400">Workspace / Congo Tech Lab / Sprints</h3>
+          <h3 className="text-sm text-gray-400">Workspace / Bénin Tech Hub / Sprints</h3>
           <p className="text-lg font-bold text-white font-sans">Sprint Alpha Board</p>
         </div>
         <button
@@ -215,7 +215,7 @@ export default function KanbanBoard({ tasks, onAddTask, onUpdateTaskStatus, onDe
                               className="p-1 rounded bg-gray-900 border border-gray-800 text-gray-500 hover:text-[#00C969] text-[10px] cursor-pointer font-mono"
                               title="Reculer d'un état"
                             >
-                              ◀
+                              <ArrowLeft className="w-3 h-3" />
                             </button>
                           )}
                           {col.id !== 'done' && (
@@ -224,7 +224,7 @@ export default function KanbanBoard({ tasks, onAddTask, onUpdateTaskStatus, onDe
                               className="p-1 rounded bg-gray-900 border border-gray-800 text-gray-400 hover:text-[#00C969] text-[10px] cursor-pointer font-mono"
                               title="Avancer d'un état"
                             >
-                              ▶
+                              <ArrowRight className="w-3 h-3" />
                             </button>
                           )}
                           <button

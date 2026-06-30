@@ -1,16 +1,5 @@
 import React from "react";
-import { 
-  CheckCircle2, 
-  Clock, 
-  Flame, 
-  ArrowRight, 
-  Calendar, 
-  ChevronRight, 
-  Trello, 
-  MessageSquare, 
-  Users2,
-  TrendingUp
-} from "lucide-react";
+import { CheckCircle2, Clock, Flame, Calendar, ChevronRight, Trello, MessageSquare, Users2, TrendingUp } from "lucide-react";
 import { Task } from "../types";
 
 interface DashboardHomeProps {
@@ -39,7 +28,7 @@ export default function DashboardHome({ tasks, onToggleTaskStatus, setActiveTab 
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)]">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Top Banner Greeting */}
       <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-[#0d1527] via-[#090f1d] to-[#070a13] border border-gray-800/80 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#00C969]/5 rounded-full blur-[90px] pointer-events-none" />
@@ -48,10 +37,10 @@ export default function DashboardHome({ tasks, onToggleTaskStatus, setActiveTab 
           <div className="space-y-2">
             <span className="text-xs text-[#00C969] font-mono font-bold uppercase tracking-wider">WORKSPACE ACTIF • SPRINT ALPHA</span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-sans">
-              Bonjour, Elara Vance ! 👋
+              Bonjour, Elara Vance !
             </h1>
             <p className="text-sm text-gray-400 max-w-2xl">
-              Votre tableau de bord WINE est configuré et prêt. Votre équipe de développement à Abidjan vient de pousser la branche d'intégration API.
+              Votre tableau de bord WINE est configuré et prêt. Votre équipe de développement au Bénin vient de pousser la branche d'intégration API.
             </p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900/80 border border-gray-800 text-xs font-mono text-gray-300">

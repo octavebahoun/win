@@ -9,7 +9,8 @@ dotenv.config();
 async function startServer() {
   const app = express();
   app.use(express.json());
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 3000);
+  const HMR_PORT = Number(process.env.VITE_HMR_PORT || 24678);
 
   // Initialize Gemini API client safely
   let ai: GoogleGenAI | null = null;
@@ -44,7 +45,7 @@ async function startServer() {
       const mockResponses = [
         `Salut ! Je suis **WINE AI**, ton assistant virtuel de sprint. Je vois que la clé API n'est pas encore configurée, mais je suis opérationnel pour t'accompagner ! Quel projet de startup africaine lançons-nous aujourd'hui ? 🚀`,
         `Excellente question. Pour optimiser la vélocité de l'équipe (qui est actuellement de **84 pts/sprint**), je te propose de découper la tâche "Refonte Dashboard" en 3 sous-tâches plus digestes pour Elara.`,
-        `J'ai analysé ton calendrier de diffusion. Le post WhatsApp prévu pour ce soir à 18:00 est optimisé pour un taux d'ouverture maximal dans les régions de Dakar et d'Abidjan ! 📈`
+        `J'ai analysé ton calendrier de diffusion. Le post WhatsApp prévu pour ce soir à 18:00 est optimisé pour un taux d'ouverture maximal à Lokossa et Cotonou, au Bénin ! 📈`
       ];
       const randomMock = mockResponses[Math.floor(Math.random() * mockResponses.length)];
       setTimeout(() => {
@@ -97,7 +98,10 @@ Keep responses concise, high-value, and strictly in French (since the app langua
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: { port: HMR_PORT },
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);

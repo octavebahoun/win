@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Users2, Calendar, FileText, Sparkles, User, Mail, Plus, X } from "lucide-react";
+import { Users2, Calendar, FileText, Mail, Plus, X } from "lucide-react";
 import { TeamMember } from "../types";
 
 export default function RHTalents() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const team: TeamMember[] = [
     {
@@ -42,7 +43,21 @@ export default function RHTalents() {
   ];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)] text-white relative">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto text-white relative">
+      {notice && (
+        <div className="p-3 rounded-xl bg-[#00C969]/10 border border-[#00C969]/20 text-[#40e682] text-xs flex items-center justify-between gap-3">
+          <span>{notice}</span>
+          <button
+            type="button"
+            onClick={() => setNotice(null)}
+            className="p-1 rounded text-emerald-300 hover:text-white"
+            aria-label="Masquer le message"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Upper action bar */}
       <div className="flex items-center justify-between">
         <div>
@@ -50,7 +65,7 @@ export default function RHTalents() {
           <p className="text-lg font-bold text-white font-sans">Gestion des Talents & Collaborateurs</p>
         </div>
         <button
-          onClick={() => alert("Fonctionnalité d'invitation réservée à l'administrateur.")}
+          onClick={() => setNotice("Invitation prête: cette action sera reliée au module administrateur.")}
           className="h-9 px-4 rounded-lg bg-[#00C969]/10 hover:bg-[#00C969]/20 text-[#00C969] font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-[#00C969]/20"
         >
           <Plus className="w-4 h-4" />
@@ -167,13 +182,13 @@ export default function RHTalents() {
             {/* Actions inside drawer */}
             <div className="pt-6 border-t border-gray-800 flex gap-3">
               <button
-                onClick={() => alert(`Contacter ${selectedMember.name} via e-mail professionel.`)}
+                onClick={() => setNotice(`Message préparé pour ${selectedMember.name}.`)}
                 className="flex-1 h-10 rounded-xl bg-[#00C969] text-[#070b14] font-bold text-xs"
               >
                 Envoyer un e-mail
               </button>
               <button
-                onClick={() => alert("Modification des coordonnées réservée aux administrateurs RH.")}
+                onClick={() => setNotice("La modification RH sera disponible pour les administrateurs.")}
                 className="flex-1 h-10 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 font-bold text-xs"
               >
                 Modifier

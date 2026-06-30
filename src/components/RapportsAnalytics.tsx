@@ -10,15 +10,7 @@ import {
   AreaChart, 
   Area 
 } from "recharts";
-import { 
-  BarChart3, 
-  Zap, 
-  TrendingUp, 
-  Users, 
-  Activity, 
-  Award,
-  Download
-} from "lucide-react";
+import { Zap, TrendingUp, Activity, Award, Download } from "lucide-react";
 
 export default function RapportsAnalytics() {
   const [isExporting, setIsExporting] = React.useState(false);
@@ -463,11 +455,11 @@ export default function RapportsAnalytics() {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(7.5);
       doc.setTextColor("#94a3b8");
-      doc.text("Congo Tech Lab — Rapport de Performance Officiel Sprints (Confidentiel)", 20, footerY);
+      doc.text("Bénin Tech Hub — Rapport de Performance Officiel Sprints (Confidentiel)", 20, footerY);
       doc.text("Page 1 de 1", 190, footerY, { align: "right" });
 
       // Save PDF file
-      doc.save("CongoTechLab_Rapport_Analytics.pdf");
+      doc.save("BeninTechHub_Rapport_Analytics.pdf");
 
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 4000);
@@ -479,12 +471,12 @@ export default function RapportsAnalytics() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto overflow-y-auto max-h-[calc(100vh-4rem)] text-white">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 max-w-7xl mx-auto text-white">
       {exportSuccess && (
         <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#00C969] animate-ping" />
-            <span>Le document PDF <strong>CongoTechLab_Rapport_Analytics.pdf</strong> a été généré et téléchargé avec succès !</span>
+            <span>Le document PDF <strong>BeninTechHub_Rapport_Analytics.pdf</strong> a été généré et téléchargé avec succès !</span>
           </div>
         </div>
       )}
@@ -492,7 +484,7 @@ export default function RapportsAnalytics() {
       {/* Top Header details */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-sm text-gray-400">Workspace / Congo Tech Lab / Sprints</h3>
+          <h3 className="text-sm text-gray-400">Workspace / Bénin Tech Hub / Sprints</h3>
           <p className="text-lg font-bold text-white font-sans">Rapports & Statistiques Sprints</p>
         </div>
         <button

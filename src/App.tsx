@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Menu } from "lucide-react";
 import LandingPage from "./components/LandingPage";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -15,7 +16,9 @@ export default function App() {
   const [mode, setMode] = useState<"landing" | "app">("landing");
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   // Initial High-Fidelity Tasks
   const [tasks, setTasks] = useState<Task[]>([
@@ -77,7 +80,7 @@ export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([
     {
       id: "e1",
-      title: "🚀 Notre vélocité atteint 84 pts ce mois-ci ! Un record pour Congo Tech Lab. Découvrez comment nos équipes accélèrent.",
+      title: "🚀 Notre vélocité atteint 84 pts ce mois-ci ! Un record pour Bénin Tech Hub. Découvrez comment nos équipes accélèrent.",
       platform: "linkedin",
       scheduledTime: "11:00",
       day: 13,
@@ -95,7 +98,7 @@ export default function App() {
     },
     {
       id: "e3",
-      title: "✨ Les coulisses de l'équipe WINE SaaS à Abidjan ! Découvrez nos nouveaux locaux.",
+      title: "✨ Les coulisses de l'équipe WINE SaaS entre Lokossa et Cotonou ! Découvrez nos nouveaux locaux.",
       platform: "instagram",
       scheduledTime: "15:30",
       day: 14,
@@ -175,6 +178,7 @@ export default function App() {
     };
 
     setMessages(prev => [...prev, userMsg]);
+    setChatError(null);
     setIsGenerating(true);
 
     try {
@@ -205,6 +209,7 @@ export default function App() {
       setMessages(prev => [...prev, aiMsg]);
     } catch (error) {
       console.error("Error communicating with Gemini Chat backend:", error);
+      setChatError("WINE AI n'a pas pu joindre le serveur. Le message est conservé dans la discussion, réessayez dans un instant.");
     } finally {
       setIsGenerating(false);
     }
@@ -244,6 +249,8 @@ export default function App() {
             messages={messages} 
             onSendMessage={handleSendMessage} 
             isGenerating={isGenerating} 
+            errorMessage={chatError}
+            onDismissError={() => setChatError(null)}
           />
         );
       case "timeline":
@@ -283,17 +290,43 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-screen bg-[#080d19] overflow-hidden font-sans text-white">
-      {/* Sidebar Nav */}
+      {isMobileSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Fermer la navigation"
+          onClick={() => setIsMobileSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+        />
+      )}
+
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setIsMobileSidebarOpen(false);
+        }} 
         onExitApp={() => setMode("landing")} 
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
+        isMobileOpen={isMobileSidebarOpen}
       />
 
-      {/* Main Panel Content */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+        <div className="md:hidden h-14 px-4 border-b border-gray-800/60 bg-[#080d19]/95 flex items-center justify-between">
+          <button
+            type="button"
+            aria-label="Ouvrir la navigation"
+            onClick={() => setIsMobileSidebarOpen(true)}
+            className="w-10 h-10 rounded-lg bg-gray-900 border border-gray-800 text-gray-300 flex items-center justify-center"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#00C969] flex items-center justify-center text-[#070b14] font-mono font-black">W</div>
+            <span className="text-xs font-bold tracking-widest">WINE</span>
+          </div>
+        </div>
+
         <Header 
           title={getHeaderTitle()} 
           onAddTaskClick={activeTab === "kanban" || activeTab === "tasks" ? () => handleAddTask({
@@ -311,7 +344,7 @@ export default function App() {
         />
 
         {/* Dynamic Inner view container */}
-        <main className="flex-1 overflow-hidden bg-[#080d19]">
+        <main className="flex-1 min-h-0 overflow-hidden bg-[#080d19]">
           {renderActiveView()}
         </main>
       </div>
