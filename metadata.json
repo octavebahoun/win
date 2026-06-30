@@ -1,0 +1,6 @@
+{
+  "name": "WINE SaaS",
+  "description": "Plateforme collaborative de gestion de projets tout-en-un pour les startups africaines.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,201 @@
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Hash, Sparkles, AlertCircle, RefreshCw, SendHorizontal } from "lucide-react";
+import { ChatMessage } from "../types";
+
+interface ChatCollaborationProps {
+  messages: ChatMessage[];
+  onSendMessage: (content: string) => Promise<void>;
+  isGenerating: boolean;
+}
+
+export default function ChatCollaboration({ messages, onSendMessage, isGenerating }: ChatCollaborationProps) {
+  const [activeChannel, setActiveChannel] = useState("#project-alpha");
+  const [userInput, setUserInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const channels = [
+    { name: "#project-alpha", desc: "Suivi des sprints et sprints techniques" },
+    { name: "#general", desc: "Annonces globales d'équipe" },
+    { name: "#marketing", desc: "Calendrier éditorial & réseaux sociaux" },
+    { name: "#rh-talents", desc: "Congés, contrats et onboardings" }
+  ];
+
+  const quickPrompts = [
+    "Rédige un post LinkedIn sur notre vélocité active de 84 pts",
+    "Synthétise les tâches restantes du Sprint Alpha",
+    "Aide Julian Pierce à concevoir l'architecture API",
+    "Quels sont les congés restants d'Elara et Julian ?"
+  ];
+
+  // Auto scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isGenerating]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userInput.trim() || isGenerating) return;
+    
+    onSendMessage(userInput);
+    setUserInput("");
+  };
+
+  const handleQuickPromptClick = (promptText: string) => {
+    if (isGenerating) return;
+    setUserInput(promptText);
+  };
+
+  return (
+    <div className="flex h-[calc(100vh-4rem)] bg-[#070b14] overflow-hidden">
+      
+      {/* Channels Sidebar List */}
+      <div className="w-64 border-r border-gray-800/60 bg-[#060a12] p-4 flex flex-col justify-between hidden md:flex">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono mb-3">CANAUX COLLABORATIFS</h3>
+            <div className="space-y-1">
+              {channels.map(chan => (
+                <button
+                  key={chan.name}
+                  onClick={() => setActiveChannel(chan.name)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                    activeChannel === chan.name
+                      ? "bg-[#00C969]/10 text-[#40e682]"
+                      : "text-gray-400 hover:text-white hover:bg-gray-900/30"
+                  }`}
+                >
+                  <Hash className="w-3.5 h-3.5" />
+                  <span className="truncate">{chan.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Gemini Engine Alert indicator */}
+        <div className="p-3.5 rounded-xl bg-[#00C969]/5 border border-[#00C969]/10 space-y-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#00C969] uppercase font-mono">
+            <Sparkles className="w-3 h-3 animate-pulse" />
+            <span>Moteur Gemini 3.5</span>
+          </div>
+          <p className="text-[10px] text-gray-500 leading-relaxed">
+            WINE AI est connecté au serveur Gemini pour répondre aux questions d'analyse ou de programmation.
+          </p>
+        </div>
+      </div>
+
+      {/* Main Messaging Interface */}
+      <div className="flex-1 flex flex-col justify-between bg-[#080d19]">
+        
+        {/* Active channel header */}
+        <div className="h-14 border-b border-gray-800/60 bg-[#080d19]/80 backdrop-blur px-6 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4 text-[#00C969]" />
+              <span className="text-sm font-bold text-white font-sans">{activeChannel}</span>
+            </div>
+            <p className="text-[10px] text-gray-500 hidden sm:block">
+              {channels.find(c => c.name === activeChannel)?.desc || "Discussion collaborative"}
+            </p>
+          </div>
+        </div>
+
+        {/* Messages List Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {messages.map((msg) => {
+            const isUser = msg.sender === "user";
+            return (
+              <div 
+                key={msg.id} 
+                className={`flex gap-4 max-w-3xl ${isUser ? "ml-auto flex-row-reverse" : "mr-auto"}`}
+              >
+                {/* Avatar */}
+                <img 
+                  src={msg.avatar} 
+                  alt={msg.senderName} 
+                  className="w-8 h-8 rounded-full border border-gray-800 object-cover flex-shrink-0"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Message Body */}
+                <div className="space-y-1">
+                  <div className={`flex items-center gap-2 text-[10px] ${isUser ? "justify-end text-gray-400" : "text-gray-400"}`}>
+                    <span className="font-bold text-white">{msg.senderName}</span>
+                    <span className="font-mono">{msg.timestamp}</span>
+                    {!isUser && msg.sender === "assistant" && (
+                      <span className="text-[9px] bg-[#00C969]/10 text-[#00C969] font-mono font-bold px-1 rounded uppercase">IA</span>
+                    )}
+                  </div>
+                  
+                  <div 
+                    className={`p-3.5 rounded-2xl text-xs leading-relaxed space-y-2 select-text selection:bg-[#00C969]/20 ${
+                      isUser 
+                        ? "bg-[#00C969] text-slate-900 font-medium rounded-tr-none" 
+                        : "bg-[#090f1d] border border-gray-800 text-gray-300 rounded-tl-none whitespace-pre-wrap"
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Assistant Generation State Loader */}
+          {isGenerating && (
+            <div className="flex gap-4 max-w-3xl">
+              <div className="w-8 h-8 rounded-full bg-[#00C969]/10 border border-[#00C969]/20 flex items-center justify-center text-[#00C969]">
+                <Sparkles className="w-4 h-4 animate-spin" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-gray-400">WINE AI</span>
+                <div className="p-3.5 rounded-2xl rounded-tl-none bg-[#090f1d] border border-gray-800 text-xs text-gray-500 flex items-center gap-2">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00C969]" />
+                  <span>WINE AI formule votre réponse...</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Bottom Inputs & Prompts suggestions */}
+        <div className="p-4 border-t border-gray-800/60 bg-[#060a12]/50 space-y-3">
+          
+          {/* Prompt Ideas List */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
+            {quickPrompts.map((p, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleQuickPromptClick(p)}
+                className="px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 hover:border-[#00C969]/40 text-left text-[10px] font-medium text-gray-400 hover:text-white flex-shrink-0 transition-all cursor-pointer"
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+
+          {/* Form message input */}
+          <form onSubmit={handleSubmit} className="flex gap-2 relative">
+            <input 
+              type="text"
+              placeholder="Envoyer un message ou demander à WINE AI..."
+              value={userInput}
+              onChange={e => setUserInput(e.target.value)}
+              disabled={isGenerating}
+              className="flex-1 h-11 bg-gray-950 border border-gray-800 rounded-xl px-4 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#00C969]/50 transition-all duration-200 pr-12"
+            />
+            <button
+              type="submit"
+              disabled={isGenerating || !userInput.trim()}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gradient-to-r from-[#00C969] to-[#40e682] text-slate-900 flex items-center justify-center transition-all cursor-pointer hover:shadow-[0_0_10px_rgba(0,201,105,0.25)] active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <SendHorizontal className="w-4 h-4 stroke-[2.5px]" />
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
